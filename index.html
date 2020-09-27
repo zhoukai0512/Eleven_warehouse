@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="lib/bootstrap.css">
+    <script src="lib/axios.js"></script>
+    <script src="lib/template-web.js"></script>
+    <script src="lib/jquery.js"></script>
+</head>
+
+<body>
+    <div class="loading_gif">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Ajax阶段实战</h3>
+            </div>
+            <div class="panel-body">
+
+                <!-- 分页 -->
+                <nav aria-label="Page navigation" style="text-align: center;">
+                    <ul class="pagination">
+                        <li class="previous">
+                            <a href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="active item"><a href="javascript:;">1</a></li>
+                        <li class="item"><a href="javascript:;">2</a></li>
+                        <li class="item"><a href="javascript:;">3</a></li>
+                        <li class="item"><a href="javascript:;">4</a></li>
+                        <li class="next">
+                            <a href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- 列表内容 -->
+                <div class="content">
+                    <div class="row">
+
+                        <!-- <img
+                    src="https://n.sinaimg.cn/sports/transform/200/w600h400/20200808/3fe1-ixkvvue1320286.jpg"
+                    alt="..."
+                  />
+                  <div class="caption">
+                    <h3>世锦赛颜丙涛11-13特鲁姆普</h3>
+                    <p>
+                      北京时间8月8日凌晨，斯诺克世锦赛第二轮，颜丙涛11-13特鲁姆普无缘8强。图片来源：Benjamin
+                      Mole/WST。
+                    </p>
+                  </div> -->
+                    </div>
+                </div>
+                <script type="text/html" id="user">
+            {{each data}}
+            
+                <div class=" col-md-3" >
+                  <div class="thumbnail" style="height: 500px;">
+                    <img style="height: 350px;"
+                    src={{$value.img_url}}
+                    alt="..."
+                    />
+                    <h3>{{$value.short_name}}</h3>
+                    <p>{{$value.short_intro}}</p>
+    </div>
+  </div>
+            {{/each}}
+            </script>
+            </div>
+        </div>
+
+        <script>
+            $(function () {
+                var index =sessionStorage.getItem('id')?sessionStorage.getItem('id'):$('.active').index()//获取这个类名在li里面的索引
+                xuanrang(index)
+                $('.item').eq(index - 1).addClass('active').siblings().removeClass('active')
+                $('.item').on('click', function () {
+                    $(this).addClass('active').siblings().removeClass('active')
+                    index = $(this).index()
+                    xuanrang(index)
+                    sessionStorage.setItem('id',index)
+                })
+                $('.pagination').on('click', '.next', function () {
+                    if(index<4){
+                        index++
+                    }
+                    $('.item').eq(index - 1).addClass('active').siblings().removeClass('active')
+                    sessionStorage.setItem('id',index)
+                    if (index <=4) {
+                        xuanrang(index)
+                    }
+                })
+                $('.pagination').on('click', '.previous', function () {
+                    if(index>1){
+                        index-- 
+                    }
+                    $('.item').eq(index - 1).addClass('active').siblings().removeClass('active')
+                    sessionStorage.setItem('id',index)
+                    if(index>=1){
+                        xuanrang(index)
+                    }   
+                })
+                function xuanrang(id) {
+                    $.ajax({
+                        type: "GET",
+                        url: "https://photo.sina.cn/aj/index",
+                        dataType: "jsonp",
+                        data: {
+                            page: id,
+                            cate: 'recommend',
+                        },
+                        success: function (res) {
+                            console.log(res);
+                            var htmls = template('user', res)
+                            // console.log(htmls);
+                            $('.row').html(htmls)
+                        }
+                    })
+                }
+                
+            })
+        </script>
+</body>
+
+</html>
